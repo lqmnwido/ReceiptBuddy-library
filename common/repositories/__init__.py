@@ -33,6 +33,34 @@ class EmployeeRepository(BaseRepository[Employee]):
     def get_by_department(self, department: str) -> List[Employee]:
         return self.list(department=department, is_active=True)
 
+    def create_from_schema(self, schema, exclude_unset: bool = False) -> Employee:
+        """Create employee, optionally creating a linked User account."""
+        data = schema.model_dump(exclude_unset=exclude_unset)
+        # Extract user-creation fields (not part of Employee model)
+        password = data.pop("password", None)
+        user_id = data.pop("user_id", None)
+        # Create Employee
+        employee = self.create(**data)
+        # If password provided, create a User account for login
+        if password and employee.email:
+            try:
+                from common.models import User
+                from common.security import get_security
+                from common.repositories import UserRepository
+                security = get_security()
+                hashed = security.hash_password(password)
+                user_repo = UserRepository(self.db)
+                user_repo.create(
+                    email=employee.email,
+                    hashed_password=hashed,
+                    full_name=employee.name,
+                    role="employee",
+                    is_active=True,
+                )
+            except Exception:
+                pass  # User creation is optional
+        return employee
+
 
 class AttendanceRepository(BaseRepository[Attendance]):
     def __init__(self, db: Session):

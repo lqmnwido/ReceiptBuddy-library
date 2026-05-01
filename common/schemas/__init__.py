@@ -239,6 +239,14 @@ class ReceiptUploadResponse(BaseModel):
     line_items: List[dict] = []
 
 
+class ReceiptUpdate(BaseModel):
+    vendor: Optional[str] = None
+    total: Optional[float] = None
+    category: Optional[str] = None
+    date: Optional[str] = None
+    line_items: Optional[List[dict]] = None
+
+
 class ExpenseCreate(BaseModel):
     receipt_id: Optional[int] = None
     employee_id: Optional[int] = None

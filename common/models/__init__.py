@@ -5,7 +5,7 @@ Domains:
   - HR: Employee, Attendance, LeaveBalance, Leave, ShiftTemplate, Shift, ShiftAssignment
   - Finance: Receipt, ExpenseCategory, Expense, InventoryItem, Invoice
 """
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Text, Float, JSON
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, Date, ForeignKey, Text, Float, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -156,7 +156,7 @@ class Receipt(TimestampedBase):
     image_url = Column(String(500), nullable=True)
     vendor = Column(String(255), nullable=True)
     total = Column(Float, nullable=True)
-    date = Column(String(10), nullable=True)
+    date = Column(Date, nullable=True)
     category = Column(String(100), nullable=True)
     raw_text = Column(Text, nullable=True)
     line_items = Column(JSON, default=[])
